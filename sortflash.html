@@ -1,0 +1,272 @@
+<html>
+    <head>
+        <title>排序动画</title>
+        <style>
+            #box{
+                display: flex;
+                justify-content: space-around;
+                align-items: flex-end;
+                width: 100%;
+                height: 80%;
+                background-color: rgb(58,76,82);
+            }
+            #box2{
+                width: 100%;
+                height: 15%;
+            }
+            #box div{
+                background-color: rgb(163,209,229);
+                color: white;
+                text-align: center;
+                display: inline-block;
+            }
+            #boxboxbox{
+                width:0;
+                height:100%;
+                display:inline-block;
+                margin-left:0px;
+            }
+            </style>                  
+    </head>
+    <body>
+        <div id="box2">
+            <label from="text">请输入你要排序的数1-100，以空格为分隔</label>
+            <input type="text" id="text" onchange="sort()"><br><br>
+            <label from="select">排序算法</label>
+            <select id="select1">
+                <option value="0">冒泡</option>
+                <option value="1">选择</option>
+                <option value="2">插入</option>
+            </select>
+            <label from="select2">排序</label>
+            <select id="select2">
+                <option value="0">降序</option>
+                <option value="1">升序</option>
+            </select>
+            <button type="button" onclick="Tosort(document.getElementById('select1').value,document.getElementById('select2').value)">确定</button>
+        </div>
+        <div id="box">
+        </div>
+        <script>
+            var box = document.getElementById("box");
+            var boxW = box.offsetWidth;
+            var boxH = box.offsetHeight;
+            var number;
+            function sort(){
+                box.innerHTML="";
+                var x=document.getElementById("text");
+                number=x.value.trim().split(' ');
+                var max=Math.max.apply(null,number);
+                for(site in number){
+                    var child =document.createElement("div");
+                    child.className="content";
+                    child.innerHTML=number[site];
+                    child.style.width=1/(number.length+1)*100+"%";
+                    child.style.height=boxH/100*number[site]+"px";
+                   box.appendChild(child);
+                }
+            }
+
+            function sleep(time) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve();
+                }, time);
+                });
+                }
+
+                async function Tosort(method,order){
+                var childDiv=box.children;
+                
+                if(method==0){
+                    if(order==0){
+                        for (var i=0;i<childDiv.length-1;i++){
+                        for(var j=0;j<childDiv.length-1-i;j++){
+                        await sleep(300);
+                        childDiv[j].style.background="red";
+                        childDiv[j+1].style.background="red";
+                        await sleep(300);
+                        if(parseInt(childDiv[j].style.height)<parseInt(childDiv[j+1].style.height)){
+                        childDiv[j].style.background="yellow";
+                        childDiv[j+1].style.background="yellow";
+                        [number[j],number[j+1]]=[number[j+1],number[j]];     
+                        var oneH=parseInt(childDiv[j].style.height);
+                        childDiv[j].style.height=parseInt(childDiv[j+1].style.height)+"px";
+                        childDiv[j].innerHTML=number[j];
+                        childDiv[j+1].style.height=oneH+"px";
+                        childDiv[j+1].innerHTML=number[j+1];
+                    }           
+                    await sleep(300);
+                        childDiv[j].style.background=childDiv[j+1].style.background="rgb(163,209,229)";
+                    }
+                    await sleep(300); 
+                     childDiv[childDiv.length-1-i].style.background="green";  
+                    }
+                    await sleep(300);
+                        childDiv[0].style.background="green";
+                    }
+                    else{
+                        for (var i=0;i<childDiv.length-1;i++){
+                        for(var j=0;j<childDiv.length-1-i;j++){
+                        await sleep(300);
+                        childDiv[j].style.background="red";
+                        childDiv[j+1].style.background="red";
+                        await sleep(300);
+                        if(parseInt(childDiv[j].style.height)>parseInt(childDiv[j+1].style.height)){
+                        childDiv[j].style.background="yellow";
+                        childDiv[j+1].style.background="yellow";
+                        [number[j],number[j+1]]=[number[j+1],number[j]];     
+                        var oneH=parseInt(childDiv[j].style.height);
+                        childDiv[j].style.height=parseInt(childDiv[j+1].style.height)+"px";
+                        childDiv[j].innerHTML=number[j];
+                        childDiv[j+1].style.height=oneH+"px";
+                        childDiv[j+1].innerHTML=number[j+1];
+                    }           
+                    await sleep(300);
+                        childDiv[j].style.background=childDiv[j+1].style.background="rgb(163,209,229)";
+                    }
+                    await sleep(300); 
+                     childDiv[childDiv.length-1-i].style.background="green";  
+               }
+               await sleep(300);
+               childDiv[0].style.background="green";
+                    }
+                }
+                else if(method==1){
+                    if(order==0){
+                        for(var i=0;i<childDiv.length;i++){
+                            var max=i;
+                            await sleep(300);
+                            childDiv[max].style.background="yellow";
+                            for(var j=i+1;j<childDiv.length;j++){
+                                await sleep(300);
+                                childDiv[j].style.background="red";
+                                await sleep(300);
+                                if(parseInt(childDiv[j].style.height)>parseInt(childDiv[max].style.height)){
+                                childDiv[max].style.background="rgb(163,209,229)";
+                                max=j;
+                                childDiv[max].style.background="yellow";
+                                }
+                                else{ childDiv[j].style.background="rgb(163,209,229)";}
+                            }
+                            await sleep(300);
+                            if(max!=i){
+                                await sleep(300);
+                                childDiv[i].style.background="yellow";
+                                [number[max],number[i]]=[number[i],number[max]];
+                                var oneH=parseInt(childDiv[max].style.height);
+                                childDiv[max].style.height=parseInt(childDiv[i].style.height)+"px";
+                                childDiv[max].innerHTML=number[max];
+                                childDiv[i].style.height=oneH+"px";
+                                childDiv[i].innerHTML=number[i];
+                                await sleep(300);
+                                childDiv[max].style.background="rgb(163,209,229)";
+                            }
+                            childDiv[i].style.background="green";
+                        }
+                    }
+                    else{
+                        for(var i=0;i<childDiv.length;i++){
+                            var min=i;
+                            await sleep(300);
+                            childDiv[min].style.background="yellow";
+                            for(var j=i+1;j<childDiv.length;j++){
+                                await sleep(300);
+                                childDiv[j].style.background="red";
+                                await sleep(300);
+                                if(parseInt(childDiv[j].style.height)<parseInt(childDiv[min].style.height)){
+                                childDiv[min].style.background="rgb(163,209,229)";
+                                min=j;
+                                childDiv[min].style.background="yellow";
+                                }
+                                else{ childDiv[j].style.background="rgb(163,209,229)";}
+                            }
+                            await sleep(300);
+                            if(min!=i){
+                                await sleep(300);
+                                childDiv[i].style.background="yellow";
+                                [number[min],number[i]]=[number[i],number[min]];
+                                var oneH=parseInt(childDiv[min].style.height);
+                                childDiv[min].style.height=parseInt(childDiv[i].style.height)+"px";
+                                childDiv[min].innerHTML=number[min];
+                                childDiv[i].style.height=oneH+"px";
+                                childDiv[i].innerHTML=number[i];
+                                await sleep(300);
+                                childDiv[min].style.background="rgb(163,209,229)";
+                            }
+                            childDiv[i].style.background="green";
+                        }
+                    }
+                }
+                else {
+                    await sleep(300);
+                    childDiv[0].style.background="green";
+                    if(order==0){
+                        for(var i=1;i<childDiv.length;i++){
+                            var index=0;
+                            await sleep(300);
+                            childDiv[i].style.background="yellow";
+                            var oneH=parseInt(childDiv[i].style.height);
+                            var onenumber=number[i];
+                            for(var j=i-1;j>=0;j--){
+                                if(parseInt(childDiv[j].style.height)>=oneH){
+                                    index=j+1;
+                                    break;
+                                }  
+                            }
+                            for(var j=i-1;j>=index;j--){
+                                await sleep(300);
+                                childDiv[j].style.background="red";
+                                await sleep(300);
+                                childDiv[j+1].style.height=parseInt(childDiv[j].style.height)+"px";
+                                number[j+1]=number[j];
+                                childDiv[j+1].innerHTML=number[j+1];
+                                childDiv[j+1].style.background="green";
+                                childDiv[j].style.background="green";
+                            }
+                            await sleep(300);
+                            childDiv[index].background="yellow";
+                            number[index]=onenumber;
+                            childDiv[index].innerHTML=number[index];
+                            childDiv[index].style.height=oneH+"px";
+                            await sleep(500);
+                            childDiv[index].style.background="green";
+                        }
+                    }
+                    else {
+                        for(var i=1;i<childDiv.length;i++){
+                            var index=0;
+                            await sleep(300);
+                            childDiv[i].style.background="yellow";
+                            var oneH=parseInt(childDiv[i].style.height);
+                            var onenumber=number[i];
+                            for(var j=i-1;j>=0;j--){
+                                if(parseInt(childDiv[j].style.height)<=oneH){
+                                    index=j+1;
+                                    break;
+                                }  
+                            }
+                            for(var j=i-1;j>=index;j--){
+                                await sleep(300);
+                                childDiv[j].style.background="red";
+                                await sleep(300);
+                                childDiv[j+1].style.height=parseInt(childDiv[j].style.height)+"px";
+                                number[j+1]=number[j];
+                                childDiv[j+1].innerHTML=number[j+1];
+                                childDiv[j+1].style.background="green";
+                                childDiv[j].style.background="green";
+                            }
+                            await sleep(300);
+                            childDiv[index].background="yellow";
+                            number[index]=onenumber;
+                            childDiv[index].innerHTML=number[index];
+                            childDiv[index].style.height=oneH+"px";
+                            await sleep(500);
+                            childDiv[index].style.background="green";
+                        }
+                    }
+                }
+                }
+        </script>
+    </body>
+</html>
