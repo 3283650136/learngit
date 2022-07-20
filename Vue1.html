@@ -1,0 +1,389 @@
+<html lang="en">
+    <head>
+        <title>Vue任务一</title>
+        <script src="https://unpkg.com/vue@next"></script>
+        <style>
+            [v-cloak]{
+                display:none
+            }
+            table{
+            border-collapse:collapse;
+            border:1px solid rgb(0, 0, 0);
+            }
+            tr{border:1px solid rgb(0, 0, 0);}
+            td{
+            border:0px;}
+            ul,li{
+                list-style-type:none;
+            }
+            li{
+                float: left;
+            }
+            #box{
+                padding-left: 25px;
+                margin: 300;
+                border-collapse: collapse;
+            }
+            .container,.st{
+            width: 1000px;
+            margin: 10px auto 0;
+            font-size: 13px;
+            font-family: 'Microsoft YaHei'
+            }
+            .overlay{
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 6;
+                background: rgba(0,0,0,0.7);
+            }
+            .overlay .con{
+                position: absolute;
+                width: 420px;
+                min-height: 300px;
+                background-color: #fff;
+                left: 50%;
+                top: 50%;
+                transform: translate3d(-50%,-50%,0);
+                -webkit-transform: translate3d(-50%,-50%,0);
+                padding:20px;
+            }
+        </style>
+    </head>
+    <body>
+            <div id="app" class="container">
+                <div>
+                    <table >
+                        <tr ><th ><button id="sort" @click="tosort()">Date ▲</button></th>
+                        <th id="box">#</th>
+                        <th id="box">Description</th>
+                        <th id=box colspan="4">Total</th>
+                        <th id="box">操作</th>
+                        </tr>
+                        <tr v-for="(n,index) of slist.slice((this.page-1)*this.pagenumber,(this.page)*this.pagenumber)" >
+                            <td id="box"  >{{n.date}}</td>
+                            <td id="box"  >{{n.number}}</td>
+                            <td id="box"  >{{n.description}}</td>
+                            <td id="box" colspan="4">{{n.Total}}</td>
+                            <td id="box">
+                                <button @click="showOverlay(index)" type="button">修改</button>
+                                <input type="checkbox"  @click="handleSelectionChange(index+(this.page-1)*this.pagenumber)" v-model="selectionStatus[index+(this.page-1)*this.pagenumber]">
+                                <label >删除</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <ul >
+                                <li><a href="#" @click="page=1">&lt;</a>&nbsp;&nbsp;</li>
+                                <li v-for="m of array"><a href="#" @click="getpagedata(m)">{{ m }} </a>&nbsp;&nbsp;</li>
+                                <li><a href="#" @click="page=totalpage">></a></li>
+                                </ul>
+                                当前处于第{{page}}页；
+                            </td>
+                            <td id="box" colspan="7"><input type="text" placeholder="Search" @click="searchFocus" @input="search" list="cars">
+                                <datalist id="cars">
+                                    <option v-for="item in searchlist" :value="item"></option>
+                                </datalist>
+                                <button type="button" @click="add">添加</button>
+                                <button type="button" @click="del()">删除</button>
+                            </td>
+                        </tr>
+                    </table>
+                         
+                </div>
+                <model :list="selectedlist" :isactive="isActive" v-cloak @change-ss="changeOverlay" @modify="modify"></model>
+            </div>
+            
+    </body>
+    <script>
+        const app=Vue.createApp( {
+              data(){
+              return{
+                  list:[
+                  { date:"11/01/2016",number:"000020",description:"Golf Hotel india",Total:"9.00"},
+                  { date:"11/02/2016",number:"000019",description:"Foxtrot",Total:"9.06"},
+                  { date:"11/03/2016",number:"000018",description:"Charlie Delto Echo",Total:"9.00"},
+                  { date:"10/15/2017",number:"000017",description:"Bravo Charlie Delta",Total:"550.00"},
+                  { date:"10/16/2017",number:"000016",description:"Alpha Bravo Charlie",Total:"26.00"},
+                  { date:"10/17/2017",number:"000015",description:"Golf Hotel india",Total:"9.00"},
+                  { date:"10/18/2017",number:"000014",description:"Foxtrot",Total:"1.00"},
+                  { date:"10/19/2017",number:"000013",description:"Charlie Delto Echo",Total:"9.00"},
+                  { date:"10/20/2017",number:"000012",description:"Bravo Charlie Delta",Total:"550.00"},
+                  { date:"10/22/2017",number:"000011",description:"Golf Hotel india",Total:"9.00"},
+                  { date:"10/23/2017",number:"000010",description:"Foxtrot",Total:"1.22"},
+                  { date:"10/24/2017",number:"000009",description:"Charlie Delto Echo",Total:"9.00"},  
+                  ],
+                  totalpage:0,         //总页数
+                  pagenumber:6,      //每页多少行数据
+                  array:[],         //页码
+                  page:1,           //当前页
+                  isActive:false,       //是否显示弹框
+                  selected:-1,          //待修改数据的下标
+                  selectedlist:{},    //待修改的数据
+                  searchlist:[],  //搜索结果的数据
+                  slist:[], //用来显示的数据
+                  mlist:[],//用来排序的数组
+                  multipleSelection:[],//待删除的下标
+                  selectionStatus:[],
+              }
+          },
+          created(){
+                this.allfalse();
+                this.setSlist(this.list);
+                this.addpage();
+          },
+          methods:{
+            allfalse(){
+                for(var i=0;i<this.list.length;i++){
+                    this.selectionStatus[i]=false;
+                }
+            },
+              handleSelectionChange(index){
+                    var i;
+                    var mdel=this.multipleSelection;
+                    for(i=0;i<this.multipleSelection.length;i++){
+                        if(this.multipleSelection[i]==index){
+                            mdel.splice(i,1);
+                            break;
+                        }
+                    }
+                    if(i>=this.multipleSelection.length){
+                        this.multipleSelection.push(index);
+                    }else{
+                        this.multipleSelection=mdel;
+                    }
+                    
+              },
+              tosort(){
+                    var x=document.getElementById("sort");
+                    for(var i=0;i<this.list.length;i++){
+                        var t=this.list[i].date.split('/');
+                        this.mlist[i]={
+                            days:"",
+                            month:"",
+                            year:""
+                        }
+                        this.mlist[i].days=t[0];
+                        this.mlist[i].month=t[1];
+                        this.mlist[i].year=t[2];
+                    }
+                    if(x.innerHTML=="Date ▼"){
+                        for(var i=0;i<this.list.length-1;i++){
+                            for(var j=0;j<this.list.length-1-i;j++){
+                                if(this.mlist[j].year>this.mlist[j+1].year){
+                                    var t=this.mlist[j];
+                                    this.mlist[j]=this.mlist[j+1];
+                                    this.mlist[j+1]=this.mlist[j];
+                                    var p=this.list[j];
+                                    this.list[j]=this.list[j+1];
+                                    this.list[j+1]=p;
+                                }else if(this.mlist[j].year==this.mlist[j+1].year){
+                                    if(this.mlist[j].month>this.mlist[j+1].month){
+                                        var t=this.mlist[j];
+                                        this.mlist[j]=this.mlist[j+1];
+                                        this.mlist[j+1]=this.mlist[j];
+                                        var p=this.list[j];
+                                        this.list[j]=this.list[j+1];
+                                        this.list[j+1]=p;
+                                    }else if(this.mlist[j].month==this.mlist[j+1].month){
+                                        if(this.mlist[j].days>this.mlist[j+1].days){
+                                            var t=this.mlist[j];
+                                            this.mlist[j]=this.mlist[j+1];
+                                            this.mlist[j+1]=this.mlist[j];
+                                            var p=this.list[j];
+                                            this.list[j]=this.list[j+1];
+                                            this.list[j+1]=p;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        x.innerHTML="Date ▲";
+                    }else{
+                        for(var i=0;i<this.list.length-1;i++){
+                            for(var j=0;j<this.list.length-1-i;j++){
+                                if(this.mlist[j].year<this.mlist[j+1].year){
+                                    var t=this.mlist[j];
+                                    this.mlist[j]=this.mlist[j+1];
+                                    this.mlist[j+1]=this.mlist[j];
+                                    var p=this.list[j];
+                                    this.list[j]=this.list[j+1];
+                                    this.list[j+1]=p;
+                                }else if(this.mlist[j].year==this.mlist[j+1].year){
+                                    if(this.mlist[j].month<this.mlist[j+1].month){
+                                        var t=this.mlist[j];
+                                        this.mlist[j]=this.mlist[j+1];
+                                        this.mlist[j+1]=this.mlist[j];
+                                        var p=this.list[j];
+                                        this.list[j]=this.list[j+1];
+                                        this.list[j+1]=p;
+                                    }else if(this.mlist[j].month==this.mlist[j+1].month){
+                                        if(this.mlist[j].days<this.mlist[j+1].days){
+                                            var t=this.mlist[j];
+                                            this.mlist[j]=this.mlist[j+1];
+                                            this.mlist[j+1]=this.mlist[j];
+                                            var p=this.list[j];
+                                            this.list[j]=this.list[j+1];
+                                            this.list[j+1]=p;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        x.innerHTML="Date ▼";
+                    }
+                    this.setSlist(this.list);
+              },
+              addpage(){
+                  this.totalpage=parseInt(this.list.length/this.pagenumber+0.9);
+                  for(var i=0;i<this.totalpage;i++){
+                      this.array[i]=i+1;
+                  }
+              },
+              getpagedata(index){
+                  this.page=index;
+              },
+              sort(){
+                  for(var i=0;i<this.multipleSelection.length-1;i++){
+                    for(var j=0;j<this.multipleSelection.length-1-i;j++){
+                        if(this.multipleSelection[j]>this.multipleSelection[j+1]){
+                            var t=this.multipleSelection[j];
+                            this.multipleSelection[j]=this.multipleSelection[j+1];
+                            this.multipleSelection[j+1]=t;
+                        }
+                    }
+                  }
+              },
+              del(){
+                  this.sort();
+                  for(var i=0;i<this.multipleSelection.length;i++){
+                    this.list.splice(this.multipleSelection[i]-i,1);
+                  }
+                  this.multipleSelection=[];
+                  this.allfalse();
+                  this.addpage();
+                  if(this.page>this.totalpage){
+                    this.page=this.totalpage;
+                  }
+                  if(this.array.length>this.totalpage){
+                    this.array.splice(this.totalpage,this.array.length-this.totalpage);
+                  }
+                  this.setSlist(this.list);
+              },
+              searchFocus(){
+                  this.page=1;  
+              }
+              ,
+              add:function(){
+                  this.selectedlist={
+                      date:"",
+                      number:"",
+                      description:"",
+                      Total:"",
+                  };
+                  this.isActive=true;
+              },
+              changeOverlay(){
+                this.isActive=!this.isActive;
+              },
+              modify(arr){
+                if(this.selected>-1){
+                    //Vue.set(this.list,this.selected,arr);
+                    this.list[this.selected]=arr;
+                    this.selected=-1;
+                }else {
+                    this.list.push(arr);
+                    this.addpage();
+                    this.allfalse();
+                    this.page=this.totalpage;
+                }
+                this.setSlist(this.list);
+                this.changeOverlay();
+              },
+              showOverlay(index){
+                index+=(this.page-1)*this.pagenumber;
+                this.selected=index;
+                this.selectedlist=this.list[index];
+                this.changeOverlay();
+              },
+              setSlist(arr){
+                this.slist=JSON.parse(JSON.stringify(arr));
+              },
+              search(e) {
+                var v = e.target.value,
+                    self = this;
+                self.searchlist = [];
+                if (v) {
+                    var ss = [];
+                    // 过滤需要的数据
+                    this.list.forEach(function (item) {
+                        if (item.number.indexOf(v) > -1) {
+                            if (self.searchlist.indexOf(item.number) == -1) {
+                                self.searchlist.push(item.number);
+                            }
+                            ss.push(item);
+                        } 
+                    });
+                    this.setSlist(ss); // 将过滤后的数据给了slist
+                } else {
+                    // 没有搜索内容，则展示全部数据
+                    this.setSlist(this.list);
+                }
+            }
+              
+          },
+          watch:{
+
+          }
+      })
+      app.component("model",{
+          props:['list','isactive'],
+          template:`<div class="overlay" v-show="isactive">
+              <div class="con">
+                <h2>添加|修改</h2>
+                  <div>
+                    <table>
+                      <tr>
+                          <td>日期</td>
+                          <td><input type="text" v-model="modifylist.date"></td>
+                      </tr>
+                      <tr>
+                          <td>编号</td>
+                          <td><input type="text" v-model="modifylist.number"></td>
+                      </tr>
+                      <tr>
+                          <td>描述</td>
+                          <td><input type="text" v-model="modifylist.description"></td>
+                      </tr>
+                      <tr>
+                          <td>总量</td>
+                          <td><input type="text" v-model="modifylist.Total"></td>
+                      </tr>
+                  </table>
+                  <p>
+                      <button type="button" @click="changeActive">取消</button>
+                      <button type="button" @click="modify">保存</button>
+                  </p>
+                  </div>
+              </div>
+              </div>`,
+              computed:{
+                  modifylist(){
+                      return this.list;
+                  }
+              },
+              methods: {
+            changeActive() {
+                this.$emit('change-ss');
+            },
+            modify() {
+                this.$emit('modify', this.modifylist);
+            }
+        }
+
+      })
+  app.mount("#app");
+  </script>
+</html>
