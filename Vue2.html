@@ -1,0 +1,521 @@
+<html>
+    <head>
+        <title>Vue 任务二</title>
+        <script src="https://unpkg.com/vue@next"></script>
+        <style>
+            body{
+                display: flex;
+                justify-content: space-evenly;
+                background: rgb(149,210,241);
+            }
+            body .box1{
+                float: left;
+                width: 30%;
+                height: 90%;
+                margin-top: 3%;
+                background: rgb(50,49,91);
+            }
+            body .box2{
+                float: right;
+                width: 30%;
+                height: 90%;
+                margin-top: 3%;
+                background: rgb(255,255,255);
+            }
+            .box1 .icon-menu {
+                float: left;
+	            width: 24px;
+	            height: 4px;
+	            border-top: 12px double;
+	            border-bottom: 4px solid;
+                margin: 5%;
+                border-color: rgb(108,108,142);
+            }
+            .box2 .icon-menu {
+                float: left;
+	            width: 24px;
+	            height: 4px;
+	            border-top: 12px double;
+	            border-bottom: 4px solid;
+                border-color: rgb(79,77,88);
+                margin: 5%;
+            }
+            .box1 .circle{
+                float: left;
+                border-radius: 50%;
+                width: 2%;
+                height: 2%;
+                margin-top: 5%;
+                margin-left: 60%;
+                background-color: rgb(234,165,26);
+            }
+            .box2 .circle{
+                float: left;
+                border-radius: 50%;
+                width: 2%;
+                height: 2%;
+                margin-top: 5%;
+                margin-left: 60%;
+                background-color: rgb(234,165,26);
+            }
+            .title{
+                float: right;
+                margin-right: 5%;
+                margin-top: 4%;
+                color: rgb(182,180,204);
+            }
+            .icon-add{
+                display: flex;
+                color: white;
+                margin-left: 10%;
+                margin-top: 20%;
+                width: 80%;
+                height: 7%;
+                border-radius: 20px;
+                background: rgb(41,40,82);
+                border: none;
+                align-items: center;
+            }
+            .icon-add2{
+                display: flex;
+                color: rgb(115,119,131);
+                margin-left: 10%;
+                margin-top: 20%;
+                width: 80%;
+                height: 7%;
+                border-radius: 20px;
+                background: rgb(236,241,245);
+                border: none;
+                align-items: center;
+            }
+            .icon-add .tadd{
+                margin-left: 5%;
+            }
+            .icon-add2 .tadd2{
+                margin-left: 5%;
+            }
+            .icon-add .add{
+                border-radius: 50%;
+                background:rgb(54,119,183) ;
+                color: white;
+                width: 12%;
+                height: 90%;
+                margin-left: 55%;
+            }
+            .icon-add2 .add2{
+                border-radius: 50%;
+                background:rgb(54,119,183) ;
+                color: white;
+                width: 12%;
+                height: 90%;
+                margin-left: 55%;
+            }
+            .todo{
+                color: white;
+                margin-left: 10%;
+                margin-top: 5%;
+
+            }
+            .todo2{
+                color: rgb(130,129,137);
+                margin-left: 10%;
+                margin-top: 5%;
+
+            }
+            .form{
+                margin-left: 5%;
+                height: 40%;
+            }
+            .formed{
+                margin-left: 5%;
+                height: 20%;
+            }
+            .tdthing{
+                width: 250px;
+            }
+            .rtdthing{
+                width: 250px;
+            }
+            .ltable {
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            }
+            .rtable {
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            }
+            .ltable tr{
+                height: 50px;
+                background: rgb(69,68,108);
+            }
+            .rtable tr{
+                height: 50px;
+                background: white;
+            }
+            .ltable tr td:first-child{
+                 border-top-left-radius: 10px;
+                 border-bottom-left-radius: 10px; 
+             }
+             .ltable tr td:last-child{
+                 border-top-right-radius: 10px;
+                 border-bottom-right-radius: 10px;     
+             }
+             .rtable tr td{
+                border-top: solid 1px gainsboro;
+                border-bottom: solid 1px gainsboro;
+             }
+             .rtable tr td:first-child{
+                 border-top-left-radius: 10px;
+                 border-bottom-left-radius: 10px;
+                 border-left: solid 1px gainsboro; 
+             }
+             .rtable tr td:last-child{
+                 border-top-right-radius: 10px;
+                 border-bottom-right-radius: 10px; 
+                 border-right: solid 1px gainsboro;    
+             }
+             .login1{
+                position: relative;
+                background: white;
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+            }
+            .rlogin1{
+                position: relative;
+                background: white;
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                border: 2px solid gainsboro;
+            }
+            .login2{
+                position: relative;
+                background: rgb(217,249,212);
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+            }
+            .rlogin2{
+                position: relative;
+                background: rgb(217,249,212);
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                border: 2px solid gainsboro;
+            }
+            .tick::after {
+                content: " ";
+                position: absolute;
+                display: inline-block;
+                width: 12px;
+                height: 6px;
+                border-width: 0 0 2px 2px;
+                overflow: hidden;
+                border-color: rgb(78,158,105);
+                border-style: solid;
+                -webkit-transform: rotate(-50deg);
+                transform: rotate(-50deg);
+                left: 4px;
+                top: 5px;
+            }
+            .overlay{
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 6;
+                background: rgba(0,0,0,0.7);
+            }
+            .overlay .con{
+                position: absolute;
+                width: 240px;
+                min-height: 150px;
+                background-color: #fff;
+                left: 50%;
+                top: 50%;
+                transform: translate3d(-50%,-50%,0);
+                -webkit-transform: translate3d(-50%,-50%,0);
+                padding:20px;
+            }
+        </style>
+    </head>
+    <body id="app">
+        <div class="box1">
+            <div class="icon-menu"></div>
+            <div class="circle"></div>
+            <div class="title">CHROSE</div>
+            <div class="icon-add"><div class="tadd">Add item</div><button type="button" class="add" @click="add">+</button> </div>
+                <div class="todo">To Do</div>
+                <div class="form"  :style="{'max-height': this.timeLineHeight + 'px'}"
+                    style="overflow-y:scroll;">
+                    <table class="ltable">
+                        <tbody>
+                                    <tr v-for="(site,index) of todolist">
+                                        <td v-if="todolist[index]!=[]" style="width:50px"><div class="login1" @click="conFrim(index)"></div></td>
+                                        <td v-if="todolist[index]!=[]" style="color:white" class="tdthing">{{ site.thing }}</td>
+                                        <td v-if="todolist[index]!=[]" style="width:100px">{{ site.date }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                </div>
+                <div class="todo">COMPLETED</div>
+                <div class="formed" :style="{'max-height': this.timeLineHeight + 'px'}"
+                    style="overflow-y:scroll;">
+                    <table class="ltable">
+                        <tbody>
+                              <tr v-for="(site,index) of completedlist">
+                                <td style="width:50px"><div class="login2" :class="agreeShow?'tick':''" ></div></td>
+                                <td style="color:white;text-decoration: line-through;" class="tdthing" >{{ site.thing }}</td>
+                                <td style="width:100px">{{ site.date }}</td>
+                              </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <model :list="addlist" :isactive="isActive" v-cloak @change-ss="changeOverlay" @modify="modify"></model>
+            
+        </div>
+        <div class="box2">
+            <div class="icon-menu"></div>
+            <div class="circle"></div>
+            <div class="title">CHROSE</div>
+            <div class="icon-add2"><div class="tadd2">Add item</div><button type="button" class="add2" @click="dayadd">+</button> </div>
+            <div class="todo2">To Do</div>
+            <div class="form"  :style="{'max-height': this.timeLineHeight + 'px'}"
+                    style="overflow-y:scroll;">
+                    <table class="rtable">
+                        <tbody>
+                                    <tr v-for="(site,index) of daylist">
+                                        <td style="width:50px"><div class="rlogin1" @click="dayconFrim(index)"></div></td>
+                                        <td style="color:rgb(115,119,131)" class="rtdthing">{{ site.thing }}</td>
+                                        <td style="width:100px">{{ site.date }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+            </div>
+            <div class="todo2">COMPLETED</div>
+            <div class="formed" :style="{'max-height': this.timeLineHeight + 'px'}"
+                    style="overflow-y:scroll;">
+                    <table class="rtable">
+                        <tbody>
+                              <tr v-for="(site,index) of daycompletedlist">
+                                <td  style="width:50px"><div class="rlogin2" :class="agreeShow?'tick':''" ></div></td>
+                                <td  style="color:rgb(115,119,131);text-decoration: line-through;" class="rtdthing" >{{ site.thing }}</td>
+                                <td style="width:100px">{{ site.date }}</td>
+                              </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <model2 :list="addlist" :isactive="isActive2" v-cloak @change-ss="changeOverlay2" @modify="daymodify"></model2>
+        </div>
+    </body>
+    <script type="text/javascript">
+            const app=Vue.createApp({
+                data(){
+                    return{
+                        todolist:[
+                            {thing:"Pick up email",date:"2022/7/31"},
+                            {thing:"Buy cat food",date:"2022/7/28"},
+                            {thing:"Get gift for grandma",date:"2022/7/31"},
+                            {thing:"Doctors appointments",date:"2022/7/31"},
+                            {thing:"Pick up email",date:"2022/7/31"},
+                            {thing:"Renew registration",date:"2022/7/31"},
+                            {thing:"HIIT workout",date:"2022/7/28"},
+                            {thing:"Buy cat food",date:"2022/8/2"},
+                            {thing:"Get gift for grandma",date:"2022/8/29"},
+                            {thing:"Doctors appointments",date:"2022/8/30"},
+                            {thing:"Pick up email",date:"2022/8/27"},
+                            {thing:"Buy cat food",date:"2022/8/5"},
+                            {thing:"Get gift for grandma",date:"2022/7/28"},
+                            {thing:"Doctors appointments",date:"2022/8/12"},
+                            {thing:"Pick up email",date:"2022/8/16"},
+                            {thing:"Buy cat food",date:"2022/8/15"},
+                            {thing:"Doctors appointments",date:"2022/7/28"},
+                            {thing:"Pick up email",date:"2022/7/28"},
+                            {thing:"Buy cat food",date:"2022/8/5"},
+                            {thing:"Get gift for grandma",date:"2022/8/4"},
+                            {thing:"Doctors appointments",date:"2022/8/12"},
+                            {thing:"Pick up email",date:"2022/8/16"},
+                            {thing:"Buy cat food",date:"2022/8/15"},
+                        ],
+                        daylist:[],
+                        completedlist:[
+                            {thing:"Renew registration",date:"2022/7/31"},
+                            {thing:"HIIT workout",date:"2022/8/1"},
+                        ],
+                        daycompletedlist:[
+                            {thing:"Renew registration",date:"Due Today"},
+                            {thing:"HIIT workout",date:"Due Today"},
+                        ],
+                        timeLineHeight:"",
+                        agreeShow: true,
+                        addlist:{},
+                        isActive:false,
+                        isActive2:false,
+                        dayindex:[],
+
+                    }
+                },
+                created(){
+                    this.toaddlist();
+                },
+                mounted(){
+                    this.timeLineHeight=document.documentElement.clientHeight-210;
+                    window.onresize=()=>{
+                        this.timeLineHeight=document.documentElement.clientHeight-210
+                    };
+                },
+                methods:{
+                    toaddlist:function(){
+                        var myDate = new Date();
+                        var nowDate =  myDate.getFullYear()+'/'+(myDate.getMonth() + 1)+'/'+myDate.getDate();
+                        for(var i=0;i<this.todolist.length;i++){
+                            if(this.todolist[i].date==nowDate){
+                               this.todolist[i].date="Due Today";
+                                this.dayindex.push(i);
+                            }
+                        }
+                        for(var i=0;i<this.dayindex.length;i++){
+                            this.daylist.unshift(this.todolist[this.dayindex[i]]);
+                            //this.$delete(this.todolist,this.dayindex[i]-i);
+                        }
+                    },
+                    conFrim(index){
+                        var x=confirm("确认是否完成?");
+                        if(x==true){
+                            this.completedlist.unshift(this.todolist[index]);
+                            
+                            for(var i=0;i<this.daylist.length;i++){
+                                if(this.daylist[i].thing==this.todolist[index].thing&&this.daylist[i].date==this.todolist[index].date){
+                                    this.daycompletedlist.unshift(this.daylist[i]);
+                                    this.daylist.splice(i,1);
+                                    i--;
+                                }
+                            }
+                            this.todolist.splice(index,1);
+                        }
+                    },
+                    dayconFrim(index){
+                        var x=confirm("确认是否完成?");
+                        if(x==true){
+                            this.daycompletedlist.unshift(this.daylist[index]);
+                            
+                            for(var i=0;i<this.todolist.length;i++){
+                                if(this.todolist[i].thing==this.daylist[index].thing&&this.todolist[i].date==this.daylist[index].date){
+                                    this.completedlist.unshift(this.todolist[i]);
+                                    this.todolist.splice(i,1);
+                                    i--;
+                                }
+                            }
+                            this.daylist.splice(index,1);
+                        }
+                    },
+                    changeOverlay(){
+                        this.isActive=!this.isActive;
+                    },
+                    changeOverlay2(){
+                        this.isActive2=!this.isActive2;
+                    },
+                    modify(arr){
+                        var myDate = new Date();
+                        var nowDate =  myDate.getFullYear()+'/'+(myDate.getMonth() + 1)+'/'+myDate.getDate();
+                        if(arr.date==nowDate){
+                            arr.date="Due Today";
+                            this.daylist.unshift(arr);
+                        }
+                        this.todolist.unshift(arr);
+                        this.changeOverlay();
+                        
+                        
+                    },
+                    daymodify(arr){
+                        this.daylist.unshift(arr);
+                        this.changeOverlay2();
+                    },
+                    add(){
+                        this.addlist={
+                            thing:"",
+                            date:"",
+                        }
+                        this.isActive=true;
+                    },
+                    dayadd(){
+                        this.addlist={
+                            thing:"",
+                            date:"Due Today",
+                        }
+                        this.isActive2=true;
+                    }
+        }          
+            })
+            app.component("model",{
+                props:["list","isactive"],
+                template:`
+                    <div class="overlay" v-show="isactive">
+                        <div class="con">
+                            <h2>添加</h2>
+                            <table>
+                                <tr>
+                                    <td>事情</td>
+                                    <td><input type="text" v-model="this.list.thing"></td>
+                                </tr>
+                                <tr>
+                                    <td>时间</td>
+                                    <td><input type="text" v-model="this.list.date"></td>
+                                </tr>
+                            </table>
+                            <p>
+                                <button type="button" @click="changeActive">取消</button>
+                                <button type="button" @click="modify">确定</button>
+                            </p>
+                        </div>
+                    </div>
+                `,
+            methods: {
+            changeActive() {
+                this.$emit('change-ss');
+            },
+            modify() {
+                this.$emit('modify', this.list);
+            }
+            }
+        })
+        app.component("model2",{
+                props:["list","isactive"],
+                template:`
+                    <div class="overlay" v-show="isactive">
+                        <div class="con">
+                            <h2>添加今日做的事情</h2>
+                            <table>
+                                <tr>
+                                    <td>事情</td>
+                                    <td><input type="text" v-model="this.list.thing"></td>
+                                </tr>
+                                <tr>
+                                    <td>时间</td>
+                                    <td><input type="text" v-model="this.list.date"></td>
+                                </tr>
+                            </table>
+                            <p>
+                                <button type="button" @click="changeActive">取消</button>
+                                <button type="button" @click="modify">确定</button>
+                            </p>
+                        </div>
+                    </div>
+                `,
+            methods: {
+            changeActive() {
+                this.$emit('change-ss');
+            },
+            modify() {
+                this.$emit('modify', this.list);
+            }
+            }
+        })
+            app.mount("#app");
+            /**/
+    </script>
+</html>
